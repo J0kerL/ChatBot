@@ -4,7 +4,7 @@ server:
     context-path: /api
 spring:
   application:
-    name: scaffold
+    name: chatbot
   profiles:
     active: dev
 
@@ -17,7 +17,7 @@ spring:
 # MyBatis 配置
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.scaffold.model.entity
+  type-aliases-package: com.chatbot.model.entity
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -47,5 +47,5 @@ logging:
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
   level:
-    com.scaffold: debug
-    com.scaffold.mapper: debug
+    com.chatbot: debug
+    com.chatbot.mapper: debug

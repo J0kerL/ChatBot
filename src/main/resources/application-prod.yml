@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://your-prod-db-host:3306/scaffold?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://your-prod-db-host:3306/chat_bot?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=Asia/Shanghai
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
@@ -30,9 +30,9 @@ spring:
 logging:
   level:
     root: warn
-    com.scaffold: info
-    com.scaffold.mapper: warn
+    com.chatbot: info
+    com.chatbot.mapper: warn
   file:
-    name: logs/scaffold.log
+    name: logs/chatbot.log
     max-size: 100MB
     max-history: 30
