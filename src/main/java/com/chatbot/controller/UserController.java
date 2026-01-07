@@ -9,10 +9,7 @@ import com.chatbot.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户认证控制器
@@ -51,5 +48,13 @@ public class UserController {
     public Result<Void> logout() {
         userService.logout();
         return Result.ok();
+    }
+
+    /**
+     * 获取当前用户信息
+     */
+    @GetMapping("/current")
+    public Result<UserVO> getCurrentUserInfo() {
+        return Result.ok(userService.getCurrentUserInfo());
     }
 }

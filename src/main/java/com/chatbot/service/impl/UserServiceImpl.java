@@ -1,5 +1,6 @@
 package com.chatbot.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.chatbot.common.exception.BizException;
 import com.chatbot.common.util.BCryptUtil;
 import com.chatbot.common.util.JwtUtil;
@@ -114,5 +115,20 @@ public class UserServiceImpl implements UserService {
             redisUtil.delete(redisKey);
             log.info("用户退出登录：userId={}", userId);
         }
+    }
+
+    /**
+     * 获取当前用户信息
+     */
+    @Override
+    public UserVO getCurrentUserInfo() {
+        Long userId = UserContext.getUserId();
+        if (userId == null) {
+            throw new BizException("用户未登录");
+        }
+        User user = userMapper.selectById(userId);
+        UserVO userVO = new UserVO();
+        BeanUtil.copyProperties(user, userVO);
+        return userVO;
     }
 }

@@ -25,4 +25,9 @@ public interface UserService {
      * 用户退出登录
      */
     void logout();
+
+    /**
+     * 获取当前用户信息
+     */
+    UserVO getCurrentUserInfo();
 }
