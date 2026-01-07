@@ -16,6 +16,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 /**
  * 用户账号服务实现
  *
@@ -49,6 +51,9 @@ public class UserServiceImpl implements UserService {
         user.setUsername(registerDTO.getUsername());
         user.setPassword(BCryptUtil.encode(registerDTO.getPassword()));
         user.setEmail(registerDTO.getEmail());
+        user.setStatus(1);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
         int result = userMapper.insert(user);
         if (result <= 0) {
@@ -61,7 +66,10 @@ public class UserServiceImpl implements UserService {
         userVO.setUsername(account.getUsername());
         userVO.setPassword("******");
         userVO.setEmail(account.getEmail());
+        userVO.setAvatar(account.getAvatar());
+        userVO.setStatus(account.getStatus());
         userVO.setCreatedAt(account.getCreatedAt());
+        userVO.setUpdatedAt(account.getUpdatedAt());
         return userVO;
     }
 

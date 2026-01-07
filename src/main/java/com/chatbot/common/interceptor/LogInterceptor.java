@@ -24,14 +24,10 @@ public class LogInterceptor implements HandlerInterceptor {
         // 获取请求信息
         String method = request.getMethod();
         String uri = request.getRequestURI();
-        String ip = getClientIP(request);
-        String queryString = request.getQueryString();
 
         log.info("====== 请求开始 ====== ");
         log.info("请求方法: {}", method);
         log.info("请求URI: {}", uri);
-        log.info("请求参数: {}", queryString);
-        log.info("客户端IP: {}", ip);
 
         return true;
     }
@@ -51,23 +47,4 @@ public class LogInterceptor implements HandlerInterceptor {
         START_TIME.remove();
     }
 
-    /**
-     * 获取客户端真实IP
-     */
-    private String getClientIP(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
-    }
 }

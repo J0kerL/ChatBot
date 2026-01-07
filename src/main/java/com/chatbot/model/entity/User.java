@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 /**
  * 用户账号实体类
+ * 
  * @author Diamond
  */
 @Data
@@ -32,7 +33,22 @@ public class User {
     private String email;
 
     /**
+     * 头像地址
+     */
+    private String avatar;
+
+    /**
+     * 用户状态：1正常 0禁用
+     */
+    private Integer status;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createdAt;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updatedAt;
 }
