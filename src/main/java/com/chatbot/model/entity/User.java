@@ -47,8 +47,4 @@ public class User {
      */
     private LocalDateTime createdAt;
 
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updatedAt;
 }

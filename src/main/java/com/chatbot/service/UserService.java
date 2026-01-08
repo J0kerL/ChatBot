@@ -2,11 +2,14 @@ package com.chatbot.service;
 
 import com.chatbot.model.dto.LoginDTO;
 import com.chatbot.model.dto.RegisterDTO;
+import com.chatbot.model.dto.UpdatePasswordDTO;
+import com.chatbot.model.dto.UpdateUserInfoDTO;
 import com.chatbot.model.vo.LoginVO;
 import com.chatbot.model.vo.UserVO;
 
 /**
  * 用户账号服务接口
+ *
  * @author Diamond
  */
 public interface UserService {
@@ -30,4 +33,14 @@ public interface UserService {
      * 获取当前用户信息
      */
     UserVO getCurrentUserInfo();
+
+    /**
+     * 修改用户信息
+     */
+    UserVO updateUserInfo(UpdateUserInfoDTO updateUserInfoDTO);
+
+    /**
+     * 修改密码
+     */
+    void updatePassword(UpdatePasswordDTO updatePasswordDTO);
 }

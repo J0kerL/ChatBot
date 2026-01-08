@@ -4,10 +4,9 @@ import com.chatbot.model.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-
 /**
  * 用户账号Mapper接口
+ *
  * @author Diamond
  */
 @Mapper
@@ -17,16 +16,6 @@ public interface UserMapper {
      * 插入用户
      */
     int insert(User user);
-
-    /**
-     * 根据ID删除
-     */
-    int deleteById(Long id);
-
-    /**
-     * 更新用户
-     */
-    int update(User user);
 
     /**
      * 根据ID查询
@@ -39,7 +28,13 @@ public interface UserMapper {
     User selectByUsername(@Param("username") String username);
 
     /**
-     * 查询所有用户
+     * 更新用户信息
      */
-    List<User> selectAll();
+    int updateUserInfo(User user);
+
+    /**
+     * 更新用户密码
+     */
+    int updatePassword(@Param("id") Long id, @Param("password") String password);
+
 }

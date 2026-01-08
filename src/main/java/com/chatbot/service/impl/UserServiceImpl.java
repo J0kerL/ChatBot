@@ -9,6 +9,8 @@ import com.chatbot.common.util.UserContext;
 import com.chatbot.mapper.UserMapper;
 import com.chatbot.model.dto.LoginDTO;
 import com.chatbot.model.dto.RegisterDTO;
+import com.chatbot.model.dto.UpdatePasswordDTO;
+import com.chatbot.model.dto.UpdateUserInfoDTO;
 import com.chatbot.model.entity.User;
 import com.chatbot.model.vo.LoginVO;
 import com.chatbot.model.vo.UserVO;
@@ -54,7 +56,6 @@ public class UserServiceImpl implements UserService {
         user.setEmail(registerDTO.getEmail());
         user.setStatus(1);
         user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
 
         int result = userMapper.insert(user);
         if (result <= 0) {
@@ -70,7 +71,6 @@ public class UserServiceImpl implements UserService {
         userVO.setAvatar(account.getAvatar());
         userVO.setStatus(account.getStatus());
         userVO.setCreatedAt(account.getCreatedAt());
-        userVO.setUpdatedAt(account.getUpdatedAt());
         return userVO;
     }
 
@@ -127,8 +127,66 @@ public class UserServiceImpl implements UserService {
             throw new BizException("用户未登录");
         }
         User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BizException("用户不存在");
+        }
         UserVO userVO = new UserVO();
         BeanUtil.copyProperties(user, userVO);
+        userVO.setPassword("******");
         return userVO;
+    }
+
+    /**
+     * 修改用户信息
+     */
+    @Override
+    public UserVO updateUserInfo(UpdateUserInfoDTO updateUserInfoDTO) {
+        Long userId = UserContext.getUserId();
+        if (userId == null) {
+            throw new BizException("用户未登录");
+        }
+
+        User user = new User();
+        user.setId(userId);
+        user.setUsername(updateUserInfoDTO.getUsername());
+        user.setEmail(updateUserInfoDTO.getEmail());
+        user.setAvatar(updateUserInfoDTO.getAvatar());
+
+        int result = userMapper.updateUserInfo(user);
+        if (result <= 0) {
+            throw new BizException("修改用户信息失败");
+        }
+
+        log.info("修改用户信息成功：userId={}", userId);
+
+        return getCurrentUserInfo();
+    }
+
+    /**
+     * 修改密码
+     */
+    @Override
+    public void updatePassword(UpdatePasswordDTO updatePasswordDTO) {
+        Long userId = UserContext.getUserId();
+        if (userId == null) {
+            throw new BizException("用户未登录");
+        }
+
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BizException("用户不存在");
+        }
+
+        if (!BCryptUtil.matches(updatePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new BizException("旧密码错误");
+        }
+
+        String newPasswordEncoded = BCryptUtil.encode(updatePasswordDTO.getNewPassword());
+        int result = userMapper.updatePassword(userId, newPasswordEncoded);
+        if (result <= 0) {
+            throw new BizException("修改密码失败");
+        }
+
+        log.info("修改密码成功：userId={}", userId);
     }
 }

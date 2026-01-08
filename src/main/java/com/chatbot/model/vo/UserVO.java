@@ -18,6 +18,5 @@ public class UserVO {
     private String avatar;
     private Integer status;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
 }

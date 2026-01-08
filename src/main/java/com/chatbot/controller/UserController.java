@@ -3,6 +3,8 @@ package com.chatbot.controller;
 import com.chatbot.common.result.Result;
 import com.chatbot.model.dto.LoginDTO;
 import com.chatbot.model.dto.RegisterDTO;
+import com.chatbot.model.dto.UpdatePasswordDTO;
+import com.chatbot.model.dto.UpdateUserInfoDTO;
 import com.chatbot.model.vo.LoginVO;
 import com.chatbot.model.vo.UserVO;
 import com.chatbot.service.UserService;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户认证控制器
+ *
  * @author Diamond
  */
 @Slf4j
@@ -56,5 +59,23 @@ public class UserController {
     @GetMapping("/current")
     public Result<UserVO> getCurrentUserInfo() {
         return Result.ok(userService.getCurrentUserInfo());
+    }
+
+    /**
+     * 修改用户信息
+     */
+    @PutMapping("/update")
+    public Result<UserVO> updateUserInfo(@Valid @RequestBody UpdateUserInfoDTO updateUserInfoDTO) {
+        UserVO userVO = userService.updateUserInfo(updateUserInfoDTO);
+        return Result.ok(userVO);
+    }
+
+    /**
+     * 修改密码
+     */
+    @PutMapping("/password")
+    public Result<Void> updatePassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
+        userService.updatePassword(updatePasswordDTO);
+        return Result.ok();
     }
 }

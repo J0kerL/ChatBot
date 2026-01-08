@@ -3,63 +3,59 @@
 <mapper namespace="com.chatbot.mapper.UserMapper">
 
     <resultMap id="BaseResultMap" type="com.chatbot.model.entity.User">
-        <id column="id" property="id" />
-        <result column="username" property="username" />
-        <result column="password" property="password" />
-        <result column="email" property="email" />
-        <result column="avatar" property="avatar" />
-        <result column="status" property="status" />
-        <result column="created_at" property="createdAt" />
-        <result column="updated_at" property="updatedAt" />
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="avatar" property="avatar"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, username, password, email, avatar, status, created_at, updated_at
+        id
+        , username, password, email, avatar, status, created_at
     </sql>
 
     <insert id="insert" parameterType="com.chatbot.model.entity.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (
-            username, password, email, avatar, status, created_at, updated_at
-        ) VALUES (
-            #{username}, #{password}, #{email}, #{avatar}, #{status}, #{createdAt}, #{updatedAt}
-        )
+        INSERT INTO user (username, password, email, avatar, status, created_at)
+        VALUES (#{username}, #{password}, #{email}, #{avatar}, #{status}, #{createdAt})
     </insert>
 
-    <delete id="deleteById">
-        DELETE FROM user WHERE id = #{id}
-    </delete>
-
-    <update id="update" parameterType="com.chatbot.model.entity.User">
-        UPDATE user
-        <set>
-            <if test="username != null">username = #{username},</if>
-            <if test="password != null">password = #{password},</if>
-            <if test="email != null">email = #{email},</if>
-            <if test="avatar != null">avatar = #{avatar},</if>
-            <if test="status != null">status = #{status},</if>
-            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
-        </set>
-        WHERE id = #{id}
-    </update>
-
     <select id="selectById" resultMap="BaseResultMap">
-        SELECT 
-        <include refid="Base_Column_List" />
+        SELECT
+        <include refid="Base_Column_List"/>
         FROM user
         WHERE id = #{id}
     </select>
 
     <select id="selectByUsername" resultMap="BaseResultMap">
-        SELECT 
-        <include refid="Base_Column_List" />
+        SELECT
+        <include refid="Base_Column_List"/>
         FROM user
         WHERE username = #{username}
     </select>
 
-    <select id="selectAll" resultMap="BaseResultMap">
-        SELECT 
-        <include refid="Base_Column_List" />
-        FROM user
-    </select>
+    <update id="updateUserInfo" parameterType="com.chatbot.model.entity.User">
+        UPDATE user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
 
+    <update id="updatePassword">
+        UPDATE user
+        SET password = #{password}
+        WHERE id = #{id}
+    </update>
 </mapper>
+
