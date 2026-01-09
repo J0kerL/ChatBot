@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(registerDTO.getUsername());
         user.setPassword(BCryptUtil.encode(registerDTO.getPassword()));
         user.setEmail(registerDTO.getEmail());
+        user.setAvatar("https://chat-b0t.oss-cn-beijing.aliyuncs.com/avatar/defaultAvatar.png");
         user.setStatus(1);
         user.setCreatedAt(LocalDateTime.now());
 
