@@ -12,6 +12,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户认证控制器
@@ -77,5 +78,16 @@ public class UserController {
     public Result<Void> updatePassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
         userService.updatePassword(updatePasswordDTO);
         return Result.ok();
+    }
+
+    /**
+     * 上传头像
+     */
+    @PostMapping("/avatar")
+    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file){
+        log.info("上传用户头像请求：originalName={}, size={}",
+                file.getOriginalFilename(), file.getSize());
+        String avatarUrl = userService.updateAvatar(file);
+        return Result.ok(avatarUrl);
     }
 }

@@ -37,4 +37,8 @@ public interface UserMapper {
      */
     int updatePassword(@Param("id") Long id, @Param("password") String password);
 
+    /**
+     * 更新用户头像
+     */
+    int updateAvatar(@Param("id") Long userId, @Param("avatar") String newAvatarUrl);
 }

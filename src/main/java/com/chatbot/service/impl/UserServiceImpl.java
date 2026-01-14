@@ -14,10 +14,12 @@ import com.chatbot.model.dto.UpdateUserInfoDTO;
 import com.chatbot.model.entity.User;
 import com.chatbot.model.vo.LoginVO;
 import com.chatbot.model.vo.UserVO;
+import com.chatbot.service.FileService;
 import com.chatbot.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -38,6 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private FileService fileService;
 
     /**
      * 用户注册
@@ -151,7 +156,6 @@ public class UserServiceImpl implements UserService {
         user.setId(userId);
         user.setUsername(updateUserInfoDTO.getUsername());
         user.setEmail(updateUserInfoDTO.getEmail());
-        user.setAvatar(updateUserInfoDTO.getAvatar());
 
         int result = userMapper.updateUserInfo(user);
         if (result <= 0) {
@@ -189,5 +193,58 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("修改密码成功：userId={}", userId);
+    }
+
+    /**
+     * 上传用户头像
+     */
+    @Override
+    public String updateAvatar(MultipartFile file) {
+        Long userId = UserContext.getUserId();
+        if (userId == null) {
+            throw new BizException("用户未登录");
+        }
+
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BizException("用户不存在");
+        }
+
+        // 校验文件类型（只允许图片）
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !isImageFile(originalFilename)) {
+            throw new BizException("只支持上传图片格式（jpg、png、gif、webp）");
+        }
+
+        // 上传新头像（使用专门的头像上传方法）
+        String newAvatarUrl = fileService.uploadAvatar(file);
+
+        // 删除旧头像（非默认头像才删除）
+        String oldAvatar = user.getAvatar();
+        if (oldAvatar != null && !oldAvatar.contains("defaultAvatar")) {
+            try {
+                fileService.deleteFile(oldAvatar);
+                log.info("删除旧头像成功：{}", oldAvatar);
+            } catch (Exception e) {
+                log.warn("删除旧头像失败：{}，错误：{}", oldAvatar, e.getMessage());
+            }
+        }
+
+        // 更新数据库
+        int result = userMapper.updateAvatar(userId, newAvatarUrl);
+        if (result <= 0) {
+            throw new BizException("更新头像失败");
+        }
+
+        log.info("更新用户头像成功：userId={}, newAvatar={}", userId, newAvatarUrl);
+        return newAvatarUrl;
+    }
+
+    /**
+     * 判断是否为图片文件
+     */
+    private boolean isImageFile(String filename) {
+        String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        return extension.matches("jpg|jpeg|png|gif|bmp|webp");
     }
 }

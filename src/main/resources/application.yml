@@ -7,6 +7,11 @@ spring:
     name: chatbot
   profiles:
     active: dev
+  # 文件上传限制
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
   # Jackson 配置
   jackson:
@@ -38,7 +43,7 @@ pagehelper:
 jwt:
   secret: Hope-I-am-Always-Happy-And-My-Family-is-Healthy
   # 1小时（毫秒）
-  expiration:  3600000
+  expiration: 3600000
   header: Authorization
   prefix: Bearer
 
@@ -49,3 +54,11 @@ logging:
   level:
     com.chatbot: debug
     com.chatbot.mapper: debug
+
+# 阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: oss-cn-beijing.aliyuncs.com
+    access-key-id: your-access-key-id
+    access-key-secret: your-access-key-secret
+    bucket-name: chat-b0t

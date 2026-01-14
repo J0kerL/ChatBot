@@ -45,9 +45,6 @@
             <if test="email != null and email != ''">
                 email = #{email},
             </if>
-            <if test="avatar != null and avatar != ''">
-                avatar = #{avatar},
-            </if>
         </set>
         WHERE id = #{id}
     </update>
@@ -55,6 +52,12 @@
     <update id="updatePassword">
         UPDATE user
         SET password = #{password}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateAvatar">
+        UPDATE user
+        SET avatar = #{avatar}
         WHERE id = #{id}
     </update>
 </mapper>

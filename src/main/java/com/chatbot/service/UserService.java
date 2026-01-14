@@ -6,6 +6,7 @@ import com.chatbot.model.dto.UpdatePasswordDTO;
 import com.chatbot.model.dto.UpdateUserInfoDTO;
 import com.chatbot.model.vo.LoginVO;
 import com.chatbot.model.vo.UserVO;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户账号服务接口
@@ -43,4 +44,9 @@ public interface UserService {
      * 修改密码
      */
     void updatePassword(UpdatePasswordDTO updatePasswordDTO);
+
+    /**
+     * 上传用户头像
+     */
+    String updateAvatar(MultipartFile file);
 }
