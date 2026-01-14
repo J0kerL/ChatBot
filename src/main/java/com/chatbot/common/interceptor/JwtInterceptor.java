@@ -29,6 +29,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        log.info("开始认证用户...");
         // 从请求头中获取Token
         String authHeader = request.getHeader(tokenHeader);
 
@@ -63,6 +64,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         // 清除ThreadLocal，防止内存泄漏
+        log.info("清除ThreadLocal，防止内存泄漏");
         UserContext.clear();
     }
 }
