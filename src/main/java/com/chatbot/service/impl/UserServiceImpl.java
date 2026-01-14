@@ -44,6 +44,11 @@ public class UserServiceImpl implements UserService {
     @Resource
     private FileService fileService;
 
+    // Redis缓存相关常量
+    private static final String USER_CACHE_PREFIX = "user:info:";
+    // 过期时间2小时
+    private static final long USER_CACHE_EXPIRE = 7200;
+
     /**
      * 用户注册
      */
@@ -119,6 +124,10 @@ public class UserServiceImpl implements UserService {
             // 从Redis中删除Token
             String redisKey = "token:" + userId;
             redisUtil.delete(redisKey);
+
+            // 清除用户信息缓存
+            clearUserCache(userId);
+
             log.info("用户退出登录：userId={}", userId);
         }
     }
@@ -132,10 +141,20 @@ public class UserServiceImpl implements UserService {
         if (userId == null) {
             throw new BizException("用户未登录");
         }
-        User user = userMapper.selectById(userId);
+
+        // 先从缓存获取
+        User user = getUserFromCache(userId);
+
+        // 缓存未命中，从数据库查询
         if (user == null) {
-            throw new BizException("用户不存在");
+            user = userMapper.selectById(userId);
+            if (user == null) {
+                throw new BizException("用户不存在");
+            }
+            // 存入缓存
+            cacheUser(user);
         }
+
         UserVO userVO = new UserVO();
         BeanUtil.copyProperties(user, userVO);
         userVO.setPassword("******");
@@ -162,8 +181,10 @@ public class UserServiceImpl implements UserService {
             throw new BizException("修改用户信息失败");
         }
 
-        log.info("修改用户信息成功：userId={}", userId);
+        // 清除缓存，让下次查询时重新加载
+        clearUserCache(userId);
 
+        log.info("修改用户信息成功：userId={}", userId);
         return getCurrentUserInfo();
     }
 
@@ -191,6 +212,9 @@ public class UserServiceImpl implements UserService {
         if (result <= 0) {
             throw new BizException("修改密码失败");
         }
+
+        // 密码修改后清除缓存
+        clearUserCache(userId);
 
         log.info("修改密码成功：userId={}", userId);
     }
@@ -236,6 +260,9 @@ public class UserServiceImpl implements UserService {
             throw new BizException("更新头像失败");
         }
 
+        // 清除缓存，让下次查询时重新加载
+        clearUserCache(userId);
+
         log.info("更新用户头像成功：userId={}, newAvatar={}", userId, newAvatarUrl);
         return newAvatarUrl;
     }
@@ -246,5 +273,40 @@ public class UserServiceImpl implements UserService {
     private boolean isImageFile(String filename) {
         String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
         return extension.matches("jpg|jpeg|png|gif|bmp|webp");
+    }
+
+    /**
+     * 从缓存中获取用户信息
+     */
+    private User getUserFromCache(Long userId) {
+        String cacheKey = USER_CACHE_PREFIX + userId;
+        Object cachedUser = redisUtil.get(cacheKey);
+        if (cachedUser instanceof User) {
+            log.debug("从缓存获取用户信息：userId={}", userId);
+            return (User) cachedUser;
+        }
+        return null;
+    }
+
+    /**
+     * 缓存用户信息
+     */
+    private void cacheUser(User user) {
+        if (user != null) {
+            String cacheKey = USER_CACHE_PREFIX + user.getId();
+            redisUtil.set(cacheKey, user, USER_CACHE_EXPIRE);
+            log.debug("从数据库查询并缓存用户信息：userId={}", user.getId());
+        }
+    }
+
+    /**
+     * 清除用户缓存
+     */
+    private void clearUserCache(Long userId) {
+        if (userId != null) {
+            String cacheKey = USER_CACHE_PREFIX + userId;
+            redisUtil.delete(cacheKey);
+            log.debug("清除用户缓存：userId={}", userId);
+        }
     }
 }
