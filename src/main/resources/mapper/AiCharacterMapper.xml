@@ -13,7 +13,7 @@
         <result column="relationship" property="relationship" jdbcType="VARCHAR"/>
         <result column="age" property="age" jdbcType="INTEGER"/>
         <result column="appearance" property="appearance" jdbcType="VARCHAR"/>
-        <result column="personality_tags" property="personalityTags" jdbcType="VARCHAR" typeHandler="com.chatbot.config.JsonTypeHandler"/>
+        <result column="personality_tags" property="personalityTags" jdbcType="VARCHAR" typeHandler="com.chatbot.common.handler.JsonTypeHandler"/>
         <result column="background" property="background" jdbcType="VARCHAR"/>
         <result column="speaking_style" property="speakingStyle" jdbcType="VARCHAR"/>
         <result column="memory_settings" property="memorySettings" jdbcType="VARCHAR"/>
@@ -25,8 +25,19 @@
     <!-- 插入: 返回自增主键 -->
     <insert id="insert" parameterType="com.chatbot.model.dto.AiCharacterDTO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO ai_character (user_id, name, relationship, age, appearance, personality_tags, background, speaking_style, memory_settings, avatar, is_template, created_at)
-        VALUES (#{userId}, #{name}, #{relationship}, #{age}, #{appearance}, #{personalityTags, typeHandler=com.chatbot.config.JsonTypeHandler}, #{background}, #{speakingStyle}, #{memorySettings}, #{avatar}, #{isTemplate}, #{createdAt})
+        VALUES (#{userId}, #{name}, #{relationship}, #{age}, #{appearance}, #{personalityTags, typeHandler=com.chatbot.common.handler.JsonTypeHandler}, #{background}, #{speakingStyle}, #{memorySettings}, #{avatar}, #{isTemplate}, #{createdAt})
     </insert>
+
+    <select id="query" resultType="com.chatbot.model.entity.AiCharacter">
+        SELECT *
+        FROM ai_character
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY id ASC
+    </select>
 
     <!-- 
         7.动态更新 (Selective Update)

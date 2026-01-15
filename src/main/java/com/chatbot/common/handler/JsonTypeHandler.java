@@ -1,4 +1,4 @@
-package com.chatbot.config;
+package com.chatbot.common.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

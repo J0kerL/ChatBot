@@ -2,12 +2,16 @@ package com.chatbot.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.chatbot.common.exception.BizException;
+import com.chatbot.common.result.PageResult;
 import com.chatbot.mapper.AiCharacterMapper;
 import com.chatbot.mapper.UserMapper;
 import com.chatbot.model.dto.AiCharacterDTO;
+import com.chatbot.model.dto.AiCharacterPageQueryDTO;
 import com.chatbot.model.entity.AiCharacter;
 import com.chatbot.model.vo.AiCharacterVO;
 import com.chatbot.service.AiCharacterService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +61,18 @@ public class AiCharacterServiceImpl implements AiCharacterService {
 
         // 返回ai角色VO
         return aiCharacterVO;
+    }
+
+    /**
+     * 分页查询AI角色
+     */
+    @Override
+    public PageResult page(AiCharacterPageQueryDTO aiCharacterPageQueryDTO) {
+        int pageNum = aiCharacterPageQueryDTO.getPageNum();
+        int pageSize = aiCharacterPageQueryDTO.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+        Page<AiCharacter> page = aiCharacterMapper.query(aiCharacterPageQueryDTO);
+        return new PageResult(page.getTotal(), page.getResult());
     }
 
 }

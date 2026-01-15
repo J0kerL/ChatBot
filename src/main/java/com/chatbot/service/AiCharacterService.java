@@ -1,6 +1,8 @@
 package com.chatbot.service;
 
+import com.chatbot.common.result.PageResult;
 import com.chatbot.model.dto.AiCharacterDTO;
+import com.chatbot.model.dto.AiCharacterPageQueryDTO;
 import com.chatbot.model.vo.AiCharacterVO;
 import jakarta.validation.Valid;
 
@@ -15,4 +17,8 @@ public interface AiCharacterService {
      */
     AiCharacterVO add(@Valid AiCharacterDTO aiCharacterDTO);
 
+    /**
+     * 分页查询AI角色
+     */
+    PageResult page(AiCharacterPageQueryDTO aiCharacterPageQueryDTO);
 }
