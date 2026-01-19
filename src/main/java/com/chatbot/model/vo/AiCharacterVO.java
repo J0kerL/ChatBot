@@ -68,11 +68,6 @@ public class AiCharacterVO {
     private String avatar;
 
     /**
-     * 是否为预设模板（0:否, 1:是）
-     */
-    private Boolean isTemplate;
-
-    /**
      * 创建时间
      */
     private LocalDateTime createdAt;

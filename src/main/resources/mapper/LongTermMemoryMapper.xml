@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 1. namespace 必须指向你的 Mapper 接口的全限定名 -->
+<mapper namespace="com.chatbot.mapper.LongTermMemoryMapper">
+
+    <!-- 2. ResultMap: 处理数据库下划线与 Java 驼峰命名的映射 -->
+    <resultMap id="BaseResultMap" type="com.chatbot.model.entity.LongTermMemory">
+        <!-- id 标签用于主键 -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <!-- result 标签用于普通字段 -->
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="character_id" property="characterId" jdbcType="BIGINT"/>
+        <result column="memory_key" property="memoryKey" jdbcType="VARCHAR"/>
+        <result column="memory_content" property="memoryContent" jdbcType="LONGVARCHAR"/>
+        <result column="importance" property="importance" jdbcType="INTEGER"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 
+        3. 动态更新 (Selective Update)
+        id: 对应接口方法名 (例如 int updateSelective(User user);)
+        parameterType: 你的实体类全路径
+    -->
+    <!--<update id="updateSelective" parameterType="com.chatbot.model.entity.LongTermMemory">
+        &lt;!&ndash; 2. 修改为你的表名 &ndash;&gt;
+        UPDATE your_table_name
+
+        &lt;!&ndash; <set> 标签会自动处理最后一个多余的逗号 &ndash;&gt;
+        <set>
+            &lt;!&ndash; 3. 根据你的实体类属性和数据库字段进行修改 &ndash;&gt;
+            &lt;!&ndash; 示例：如果是 String 类型，通常判断 != null 和 != '' &ndash;&gt;
+            <if test="username != null and username != ''">
+                user_name = #{username},
+            </if>
+
+            &lt;!&ndash; 示例：如果是 Integer/Date 等类型，通常只判断 != null &ndash;&gt;
+            <if test="age != null">
+                age = #{age},
+            </if>
+
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+
+            &lt;!&ndash; 在这里继续添加其他字段... &ndash;&gt;
+        </set>
+
+        &lt;!&ndash; 4. 指定主键条件 &ndash;&gt;
+        WHERE id = #{id}
+    </update>-->
+</mapper>

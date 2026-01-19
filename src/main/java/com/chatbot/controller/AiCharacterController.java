@@ -4,6 +4,7 @@ import com.chatbot.common.result.PageResult;
 import com.chatbot.common.result.Result;
 import com.chatbot.model.dto.AiCharacterDTO;
 import com.chatbot.model.dto.AiCharacterPageQueryDTO;
+import com.chatbot.model.dto.UpdateAiCharacterDTO;
 import com.chatbot.model.vo.AiCharacterVO;
 import com.chatbot.service.AiCharacterService;
 import jakarta.annotation.Resource;
@@ -48,4 +49,34 @@ public class AiCharacterController {
         PageResult pageResult = aiCharacterService.page(aiCharacterPageQueryDTO);
         return Result.ok(pageResult);
     }
+
+    /**
+     * 查看AI角色详情
+     */
+    @GetMapping("/get/{id}")
+    public Result<AiCharacterVO> getById(@PathVariable Long id) {
+        log.info("查看AI角色详情，id: {}", id);
+        AiCharacterVO aiCharacterVO = aiCharacterService.getById(id);
+        return Result.ok(aiCharacterVO);
+    }
+
+    /**
+     * 更新AI角色信息
+     */
+    @PutMapping("/update")
+    public Result<AiCharacterVO> update(@Valid @RequestBody UpdateAiCharacterDTO updateAiCharacterDTO) {
+        log.info("更新AI角色信息，updateAiCharacterDTO: {}", updateAiCharacterDTO);
+        AiCharacterVO aiCharacterVO = aiCharacterService.update(updateAiCharacterDTO);
+        return Result.ok(aiCharacterVO);
+    }
+
+    /**
+     * 删除AI角色
+     */
+    @DeleteMapping("/del/{id}")
+    public Result<Void> delete(@PathVariable Long id) {
+        aiCharacterService.delete(id);
+        return Result.ok();
+    }
+
 }

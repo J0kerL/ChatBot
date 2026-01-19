@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 1. namespace 必须指向你的 Mapper 接口的全限定名 -->
+<mapper namespace="com.chatbot.mapper.MessageMapper">
+
+    <!-- 2. ResultMap: 处理数据库下划线与 Java 驼峰命名的映射 -->
+    <resultMap id="BaseResultMap" type="com.chatbot.model.entity.Message">
+        <!-- id 标签用于主键 -->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <!-- result 标签用于普通字段 -->
+        <result column="conversation_id" property="conversationId" jdbcType="BIGINT"/>
+        <result column="sender_type" property="senderType" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="message_type" property="messageType" jdbcType="VARCHAR"/>
+        <result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+        <result column="file_size" property="fileSize" jdbcType="INTEGER"/>
+        <result column="duration" property="duration" jdbcType="INTEGER"/>
+        <result column="is_read" property="isRead" jdbcType="BIT"/>
+        <result column="is_withdrawn" property="isWithdrawn" jdbcType="BIT"/>
+        <result column="withdrawn_at" property="withdrawnAt" jdbcType="TIMESTAMP"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+</mapper>
