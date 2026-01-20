@@ -30,7 +30,12 @@
                 #{speakingStyle}, #{memorySettings}, #{avatar}, #{createdAt})
     </insert>
 
-    <select id="query" resultType="com.chatbot.model.entity.AiCharacter">
+    <!-- 根据ID查询 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM ai_character WHERE id = #{id}
+    </select>
+
+    <select id="query" resultMap="BaseResultMap">
         SELECT *
         FROM ai_character
         <where>

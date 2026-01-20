@@ -3,6 +3,7 @@ package com.chatbot.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.chatbot.common.exception.BizException;
 import com.chatbot.common.result.PageResult;
+import com.chatbot.common.util.AliOssUtil;
 import com.chatbot.common.util.UserContext;
 import com.chatbot.mapper.*;
 import com.chatbot.model.dto.AiCharacterDTO;
@@ -16,9 +17,12 @@ import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Author Diamond
@@ -37,6 +41,8 @@ public class AiCharacterServiceImpl implements AiCharacterService {
     private MessageMapper messageMapper;
     @Resource
     private LongTermMemoryMapper longTermMemoryMapper;
+    @Resource
+    private AliOssUtil aliOssUtil;
 
 
     /**
@@ -204,6 +210,60 @@ public class AiCharacterServiceImpl implements AiCharacterService {
         if (result <= 0) {
             throw new BizException("删除AI角色失败");
         }
+    }
+
+    /**
+     * 更新AI角色头像
+     *
+     * @param id   AI角色ID
+     * @param file 头像文件
+     * @return 头像地址
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public String updateAvatar(Long id, MultipartFile file) {
+        // 1. 验证AI角色是否存在
+        AiCharacter aiCharacter = aiCharacterMapper.selectById(id);
+        if (aiCharacter == null) {
+            throw new BizException("AI角色不存在");
+        }
+
+        // 2. 验证权限：只有创建者可以修改自己的AI角色
+        if (!aiCharacter.getUserId().equals(UserContext.getUserId())) {
+            throw new BizException("无权限修改该AI角色");
+        }
+
+        // 3. 验证文件
+        if (file == null || file.isEmpty()) {
+            throw new BizException("文件不能为空");
+        }
+
+        // 4. 生成文件名
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isEmpty()) {
+            throw new BizException("文件名不能为空");
+        }
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String fileName = "avatar/" + UUID.randomUUID() + extension;
+
+        // 5. 上传到OSS
+        String avatarUrl;
+        try {
+            avatarUrl = aliOssUtil.upload(file.getBytes(), fileName);
+        } catch (IOException e) {
+            throw new BizException("头像上传失败: " + e.getMessage());
+        }
+
+        // 6. 更新数据库
+        UpdateAiCharacterDTO updateAiCharacterDTO = new UpdateAiCharacterDTO();
+        updateAiCharacterDTO.setId(id);
+        updateAiCharacterDTO.setAvatar(avatarUrl);
+        int result = aiCharacterMapper.updateSelective(updateAiCharacterDTO);
+        if (result <= 0) {
+            throw new BizException("更新头像失败");
+        }
+
+        return avatarUrl;
     }
 
 }

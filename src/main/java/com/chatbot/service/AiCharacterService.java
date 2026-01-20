@@ -6,6 +6,7 @@ import com.chatbot.model.dto.AiCharacterPageQueryDTO;
 import com.chatbot.model.dto.UpdateAiCharacterDTO;
 import com.chatbot.model.vo.AiCharacterVO;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author Diamond
@@ -43,4 +44,13 @@ public interface AiCharacterService {
      * 删除AI角色
      */
     void delete(Long id);
+
+    /**
+     * 更新AI角色头像
+     *
+     * @param id   AI角色ID
+     * @param file 头像文件
+     * @return 头像地址
+     */
+    String updateAvatar(Long id, MultipartFile file);
 }

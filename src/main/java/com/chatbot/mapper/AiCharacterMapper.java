@@ -30,7 +30,6 @@ public interface AiCharacterMapper {
      * @param id AI角色ID
      * @return AI角色实体
      */
-    @Select("SELECT * FROM ai_character WHERE id = #{id}")
     AiCharacter selectById(Long id);
 
     /**

@@ -11,6 +11,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author Diamond
@@ -77,6 +78,17 @@ public class AiCharacterController {
     public Result<Void> delete(@PathVariable Long id) {
         aiCharacterService.delete(id);
         return Result.ok();
+    }
+
+    /**
+     * 上传AI角色头像
+     */
+    @PostMapping("/avatar/{id}")
+    public Result<String> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        log.info("上传AI角色头像请求：id={}, originalName={}, size={}",
+                id, file.getOriginalFilename(), file.getSize());
+        String avatarUrl = aiCharacterService.updateAvatar(id, file);
+        return Result.ok(avatarUrl);
     }
 
 }
