@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 1. namespace 必须指向你的 Mapper 接口的全限定名 -->
 <mapper namespace="com.chatbot.mapper.ConversationMapper">
 
-    <!-- 2. ResultMap: 处理数据库下划线与 Java 驼峰命名的映射 -->
+    <!-- 会话表字段映射：下划线 -> 驼峰 -->
     <resultMap id="BaseResultMap" type="com.chatbot.model.entity.Conversation">
-        <!-- id 标签用于主键 -->
         <id column="id" property="id" jdbcType="BIGINT"/>
-        <!-- result 标签用于普通字段 -->
-        <id column="user_id" property="userId" jdbcType="BIGINT"/>
-        <id column="character_id" property="characterId" jdbcType="BIGINT"/>
-        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="character_id" property="characterId" jdbcType="BIGINT"/>
         <result column="unread_count" property="unreadCount" jdbcType="INTEGER"/>
         <result column="is_pinned" property="isPinned" jdbcType="BIT"/>
         <result column="last_message_time" property="lastMessageTime" jdbcType="TIMESTAMP"/>
@@ -19,36 +15,69 @@
         <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <!-- 
-        3. 动态更新 (Selective Update)
-        id: 对应接口方法名 (例如 int updateSelective(User user);)
-        parameterType: 你的实体类全路径
-    -->
-    <!--<update id="updateSelective" parameterType="com.chatbot.model.entity.Conversation">
-        &lt;!&ndash; 2. 修改为你的表名 &ndash;&gt;
-        UPDATE your_table_name
+    <!-- 新增会话（自增主键回填到实体 id） -->
+    <insert id="insert" parameterType="com.chatbot.model.entity.Conversation" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO conversation (user_id, character_id, unread_count, is_pinned, last_message_time, created_at,
+                                  updated_at)
+        VALUES (#{userId}, #{characterId}, #{unreadCount}, #{isPinned}, #{lastMessageTime}, #{createdAt}, #{updatedAt})
+    </insert>
 
-        &lt;!&ndash; <set> 标签会自动处理最后一个多余的逗号 &ndash;&gt;
-        <set>
-            &lt;!&ndash; 3. 根据你的实体类属性和数据库字段进行修改 &ndash;&gt;
-            &lt;!&ndash; 示例：如果是 String 类型，通常判断 != null 和 != '' &ndash;&gt;
-            <if test="username != null and username != ''">
-                user_name = #{username},
-            </if>
-
-            &lt;!&ndash; 示例：如果是 Integer/Date 等类型，通常只判断 != null &ndash;&gt;
-            <if test="age != null">
-                age = #{age},
-            </if>
-
-            <if test="email != null and email != ''">
-                email = #{email},
-            </if>
-
-            &lt;!&ndash; 在这里继续添加其他字段... &ndash;&gt;
-        </set>
-
-        &lt;!&ndash; 4. 指定主键条件 &ndash;&gt;
+    <!-- 根据会话ID查询 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT *
+        FROM conversation
         WHERE id = #{id}
-    </update>-->
+    </select>
+
+    <!-- 根据用户ID查询列表：置顶优先，其次按最后消息时间倒序 -->
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT *
+        FROM conversation
+        WHERE user_id = #{userId}
+        ORDER BY is_pinned DESC, last_message_time DESC, id DESC
+    </select>
+
+    <!-- 动态更新：按 id + user_id 约束，防止越权修改 -->
+    <update id="updateSelective" parameterType="com.chatbot.model.entity.Conversation">
+        UPDATE conversation
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="unreadCount != null">
+                unread_count = #{unreadCount},
+            </if>
+            <if test="isPinned != null">
+                is_pinned = #{isPinned},
+            </if>
+            <if test="lastMessageTime != null">
+                last_message_time = #{lastMessageTime},
+            </if>
+        </set>
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <!-- 仅更新置顶状态 -->
+    <update id="updatePinned">
+        UPDATE conversation
+        SET is_pinned = #{isPinned}
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <!-- 仅更新未读数 -->
+    <update id="updateUnreadCount">
+        UPDATE conversation
+        SET unread_count = #{unreadCount}
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <!-- 删除会话：按 id + user_id 约束 -->
+    <delete id="deleteById">
+        DELETE
+        FROM conversation
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </delete>
 </mapper>

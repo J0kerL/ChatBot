@@ -1,59 +1,51 @@
-package com.chatbot.model.entity;
+package com.chatbot.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
- * 会话实体类
- *
- * @Author Diamond
- * @Create 2026/1/15
+ * 会话返回数据
+ * @author Administrator
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Conversation {
-    
+public class ConversationVO {
+
     /**
      * 会话ID
      */
     private Long id;
-    
+
     /**
      * 用户ID
      */
     private Long userId;
-    
+
     /**
      * AI角色ID
      */
     private Long characterId;
-    
+
     /**
      * 未读消息数
      */
     private Integer unreadCount;
-    
+
     /**
-     * 是否置顶（0:否, 1:是）
+     * 是否置顶
      */
     private Boolean isPinned;
-    
+
     /**
      * 最后一条消息时间
      */
     private LocalDateTime lastMessageTime;
-    
+
     /**
      * 创建时间
      */
     private LocalDateTime createdAt;
-    
+
     /**
      * 更新时间
      */
