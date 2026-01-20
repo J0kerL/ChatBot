@@ -39,6 +39,9 @@
         SELECT *
         FROM ai_character
         <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
             <if test="name != null and name != ''">
                 and name like concat('%',#{name},'%')
             </if>

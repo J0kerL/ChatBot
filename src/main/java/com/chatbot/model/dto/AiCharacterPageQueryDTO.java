@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class AiCharacterPageQueryDTO {
 
+    private Long userId;
+
     private String name;
 
     // 页码

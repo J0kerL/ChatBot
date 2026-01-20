@@ -2,6 +2,7 @@ package com.chatbot.controller;
 
 import com.chatbot.common.result.PageResult;
 import com.chatbot.common.result.Result;
+import com.chatbot.common.util.UserContext;
 import com.chatbot.model.dto.AiCharacterDTO;
 import com.chatbot.model.dto.AiCharacterPageQueryDTO;
 import com.chatbot.model.dto.UpdateAiCharacterDTO;
@@ -43,6 +44,7 @@ public class AiCharacterController {
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize) {
         AiCharacterPageQueryDTO aiCharacterPageQueryDTO = new AiCharacterPageQueryDTO();
+        aiCharacterPageQueryDTO.setUserId(UserContext.getUserId());
         aiCharacterPageQueryDTO.setName(name);
         aiCharacterPageQueryDTO.setPageNum(pageNum);
         aiCharacterPageQueryDTO.setPageSize(pageSize);
