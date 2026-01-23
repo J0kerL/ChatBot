@@ -31,6 +31,7 @@ public class AiCharacterController {
      */
     @PostMapping("/add")
     public Result<AiCharacterVO> add(@Valid @RequestBody AiCharacterDTO aiCharacterDTO) {
+        log.info("添加AI角色 - 名称: {}", aiCharacterDTO.getName());
         AiCharacterVO aiCharacterVO = aiCharacterService.add(aiCharacterDTO);
         return Result.ok(aiCharacterVO);
     }

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -39,9 +40,9 @@ public interface ConversationMapper {
     int updatePinned(@Param("id") Long id, @Param("userId") Long userId, @Param("isPinned") Boolean isPinned);
 
     /**
-     * 更新未读数（按 id + user_id 约束）
+     * 更新最后消息时间（按 id + user_id 约束）
      */
-    int updateUnreadCount(@Param("id") Long id, @Param("userId") Long userId, @Param("unreadCount") Integer unreadCount);
+    int updateLastMessageTime(@Param("id") Long id, @Param("userId") Long userId, @Param("lastMessageTime") LocalDateTime lastMessageTime);
 
     /**
      * 删除会话（按 id + user_id 约束）

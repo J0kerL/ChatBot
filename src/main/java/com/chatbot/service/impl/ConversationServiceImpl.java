@@ -30,6 +30,8 @@ public class ConversationServiceImpl implements ConversationService {
     private ConversationMapper conversationMapper;
     @Resource
     private AiCharacterMapper aiCharacterMapper;
+    @Resource
+    private com.chatbot.mapper.MessageMapper messageMapper;
 
     /**
      * 创建会话
@@ -50,7 +52,6 @@ public class ConversationServiceImpl implements ConversationService {
         Conversation conversation = new Conversation();
         conversation.setUserId(userId);
         conversation.setCharacterId(characterId);
-        conversation.setUnreadCount(0);
         conversation.setIsPinned(false);
         conversation.setLastMessageTime(now);
         conversation.setCreatedAt(now);
@@ -112,21 +113,14 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     /**
-     * 标记已读（将未读数置为0）
+     * 标记已读（不再需要，因为删除了unread_count字段）
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ConversationVO markRead(Long id) {
-        requireOwnerConversation(id);
-        int result = conversationMapper.updateUnreadCount(id, UserContext.getUserId(), 0);
-        if (result <= 0) {
-            throw new BizException("标记已读失败");
-        }
-        Conversation updated = conversationMapper.selectById(id);
-        if (updated == null) {
-            throw new BizException("标记已读失败");
-        }
-        return toVO(updated);
+        // 由于删除了unread_count字段，此方法仅做权限校验
+        Conversation conversation = requireOwnerConversation(id);
+        return toVO(conversation);
     }
 
     /**
@@ -161,6 +155,17 @@ public class ConversationServiceImpl implements ConversationService {
     private ConversationVO toVO(Conversation conversation) {
         ConversationVO conversationVO = new ConversationVO();
         BeanUtil.copyProperties(conversation, conversationVO);
+        
+        // 查询最后一条消息
+        com.chatbot.model.entity.Message lastMessage = messageMapper.selectLastByConversationId(conversation.getId());
+        if (lastMessage != null) {
+            conversationVO.setLastMessage(lastMessage.getContent());
+            conversationVO.setLastMessageSenderType(lastMessage.getSenderType().getCode());
+        } else {
+            conversationVO.setLastMessage("开始聊天吧~");
+            conversationVO.setLastMessageSenderType(null);
+        }
+        
         return conversationVO;
     }
 }

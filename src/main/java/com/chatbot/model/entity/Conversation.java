@@ -35,11 +35,6 @@ public class Conversation {
     private Long characterId;
     
     /**
-     * 未读消息数
-     */
-    private Integer unreadCount;
-    
-    /**
      * 是否置顶（0:否, 1:是）
      */
     private Boolean isPinned;

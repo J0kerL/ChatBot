@@ -26,7 +26,8 @@ public class JsonTypeHandler extends BaseTypeHandler<List<String>> {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, List<String> parameter, JdbcType jdbcType) throws SQLException {
         try {
-            ps.setString(i, OBJECT_MAPPER.writeValueAsString(parameter));
+            String json = OBJECT_MAPPER.writeValueAsString(parameter);
+            ps.setString(i, json);
         } catch (JsonProcessingException e) {
             throw new SQLException("Error converting List to JSON", e);
         }

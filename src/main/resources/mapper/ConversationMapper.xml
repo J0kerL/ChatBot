@@ -8,7 +8,6 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="character_id" property="characterId" jdbcType="BIGINT"/>
-        <result column="unread_count" property="unreadCount" jdbcType="INTEGER"/>
         <result column="is_pinned" property="isPinned" jdbcType="BIT"/>
         <result column="last_message_time" property="lastMessageTime" jdbcType="TIMESTAMP"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
@@ -17,9 +16,8 @@
 
     <!-- 新增会话（自增主键回填到实体 id） -->
     <insert id="insert" parameterType="com.chatbot.model.entity.Conversation" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO conversation (user_id, character_id, unread_count, is_pinned, last_message_time, created_at,
-                                  updated_at)
-        VALUES (#{userId}, #{characterId}, #{unreadCount}, #{isPinned}, #{lastMessageTime}, #{createdAt}, #{updatedAt})
+        INSERT INTO conversation (user_id, character_id, is_pinned, last_message_time, created_at, updated_at)
+        VALUES (#{userId}, #{characterId}, #{isPinned}, #{lastMessageTime}, #{createdAt}, #{updatedAt})
     </insert>
 
     <!-- 根据会话ID查询 -->
@@ -41,12 +39,6 @@
     <update id="updateSelective" parameterType="com.chatbot.model.entity.Conversation">
         UPDATE conversation
         <set>
-            <if test="title != null and title != ''">
-                title = #{title},
-            </if>
-            <if test="unreadCount != null">
-                unread_count = #{unreadCount},
-            </if>
             <if test="isPinned != null">
                 is_pinned = #{isPinned},
             </if>
@@ -65,10 +57,9 @@
           AND user_id = #{userId}
     </update>
 
-    <!-- 仅更新未读数 -->
-    <update id="updateUnreadCount">
+    <update id="updateLastMessageTime">
         UPDATE conversation
-        SET unread_count = #{unreadCount}
+        SET last_message_time = #{lastMessageTime}
         WHERE id = #{id}
           AND user_id = #{userId}
     </update>

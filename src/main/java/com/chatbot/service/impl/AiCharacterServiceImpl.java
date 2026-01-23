@@ -15,6 +15,7 @@ import com.chatbot.service.AiCharacterService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,7 @@ import java.util.UUID;
  * @Create 2026/1/15
  */
 @Service
+@Slf4j
 public class AiCharacterServiceImpl implements AiCharacterService {
 
     @Resource
@@ -73,6 +75,8 @@ public class AiCharacterServiceImpl implements AiCharacterService {
         AiCharacterVO aiCharacterVO = new AiCharacterVO();
         BeanUtil.copyProperties(aiCharacter, aiCharacterVO);
 
+        log.info("AI角色添加成功 - ID: {}, 名称: {}", aiCharacter.getId(), aiCharacter.getName());
+        
         // 返回ai角色VO
         return aiCharacterVO;
     }

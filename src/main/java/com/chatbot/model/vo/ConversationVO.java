@@ -27,11 +27,6 @@ public class ConversationVO {
     private Long characterId;
 
     /**
-     * 未读消息数
-     */
-    private Integer unreadCount;
-
-    /**
      * 是否置顶
      */
     private Boolean isPinned;
@@ -40,6 +35,16 @@ public class ConversationVO {
      * 最后一条消息时间
      */
     private LocalDateTime lastMessageTime;
+
+    /**
+     * 最后一条消息内容
+     */
+    private String lastMessage;
+
+    /**
+     * 最后一条消息的发送者类型（user/ai）
+     */
+    private String lastMessageSenderType;
 
     /**
      * 创建时间

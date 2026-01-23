@@ -10,16 +10,46 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <!-- result 标签用于普通字段 -->
         <result column="conversation_id" property="conversationId" jdbcType="BIGINT"/>
-        <result column="sender_type" property="senderType" jdbcType="VARCHAR"/>
-        <result column="content" property="content" jdbcType="VARCHAR"/>
-        <result column="message_type" property="messageType" jdbcType="VARCHAR"/>
-        <result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
-        <result column="file_size" property="fileSize" jdbcType="INTEGER"/>
-        <result column="duration" property="duration" jdbcType="INTEGER"/>
-        <result column="is_read" property="isRead" jdbcType="BIT"/>
-        <result column="is_withdrawn" property="isWithdrawn" jdbcType="BIT"/>
-        <result column="withdrawn_at" property="withdrawnAt" jdbcType="TIMESTAMP"/>
+        <result column="sender_type" property="senderType" jdbcType="VARCHAR"
+                typeHandler="com.chatbot.common.handler.MessageSenderTypeHandler"/>
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+    <insert id="insert" parameterType="com.chatbot.model.entity.Message" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO message (conversation_id, sender_type, content, created_at)
+        VALUES (#{conversationId},
+                #{senderType, typeHandler=com.chatbot.common.handler.MessageSenderTypeHandler},
+                #{content},
+                #{createdAt})
+    </insert>
+
+    <select id="pageByConversationId" resultMap="BaseResultMap">
+        SELECT *
+        FROM message
+        WHERE conversation_id = #{conversationId}
+        ORDER BY created_at ASC, id ASC
+    </select>
+
+    <select id="selectRecentByConversationId" resultMap="BaseResultMap">
+        SELECT *
+        FROM (
+                 SELECT *
+                 FROM message
+                 WHERE conversation_id = #{conversationId}
+                 ORDER BY created_at DESC, id DESC
+                 LIMIT #{limit}
+             ) t
+        ORDER BY created_at ASC, id ASC
+    </select>
+
+    <!-- 查询会话的最后一条消息 -->
+    <select id="selectLastByConversationId" resultMap="BaseResultMap">
+        SELECT *
+        FROM message
+        WHERE conversation_id = #{conversationId}
+        ORDER BY created_at DESC, id DESC
+        LIMIT 1
+    </select>
 
 </mapper>
