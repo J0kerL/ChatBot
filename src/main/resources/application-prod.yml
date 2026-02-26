@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://your-prod-db-host:3306/chat_bot?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=Asia/Shanghai
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/chat_bot?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: Diamond1234.
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
@@ -14,9 +14,9 @@ spring:
   # Redis 配置 - 生产环境
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD}
+      host: localhost
+      port: 6379
+      password: 123456
       database: 0
       timeout: 5000ms
       lettuce:
@@ -25,6 +25,19 @@ spring:
           max-wait: -1ms
           max-idle: 10
           min-idle: 5
+  ai:
+    openai:
+      # API 基础地址（支持 OpenAI 兼容接口）
+      base-url: ${AI_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode}
+      # API 密钥
+      api-key: ${AI_API_KEY:YOUR_API_KEY}
+      chat:
+        options:
+          model: ${AI_MODEL:deepseek-v3.2}
+          # 温度参数
+          temperature: 0.7
+          # 最大 token 数
+          max-tokens: 2000
 
 # 生产环境日志级别
 logging:
@@ -33,6 +46,6 @@ logging:
     com.chatbot: info
     com.chatbot.mapper: warn
   file:
-    name: logs/chatbot.log
-    max-size: 100MB
-    max-history: 30
+    name: /home/diamond/chatbot/logs/chatbot.log
+    max-size: 50MB
+    max-history: 7

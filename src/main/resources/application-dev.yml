@@ -18,6 +18,19 @@ spring:
           max-wait: -1ms
           max-idle: 8
           min-idle: 0
+  ai:
+    openai:
+      # API 基础地址（支持 OpenAI 兼容接口）
+      base-url: ${AI_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode}
+      # API 密钥
+      api-key: ${AI_API_KEY:YOUR_API_KEY}
+      chat:
+        options:
+          model: ${AI_MODEL:deepseek-v3.2}
+          # 温度参数
+          temperature: 0.7
+          # 最大 token 数
+          max-tokens: 2000
 
 # 开发环境日志级别
 logging:
