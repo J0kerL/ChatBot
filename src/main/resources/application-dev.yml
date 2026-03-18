@@ -19,15 +19,16 @@ spring:
           max-idle: 8
           min-idle: 0
   ai:
-    openai:
-      # API 基础地址（支持 OpenAI 兼容接口）
-      base-url: ${AI_BASE_URL:https://dashscope.aliyuncs.com/compatible-mode}
-      # API 密钥
-      api-key: ${AI_API_KEY:YOUR_API_KEY}
+    anthropic:
+      # API 基础地址
+      base-url: YOUR_API_BASE_URL
+      # API 密钥（从环境变量读取，如果没有则使用默认值）
+      api-key: ${ANTHROPIC_API_KEY:YOUR_API_KEY}
       chat:
         options:
-          model: ${AI_MODEL:deepseek-v3.2}
-          # 温度参数
+          # 模型名称
+          model: ${ANTHROPIC_MODEL:claude-opus-4-6}
+          # 温度参数 (0.0-1.0)
           temperature: 0.7
           # 最大 token 数
           max-tokens: 2000
